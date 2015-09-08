@@ -1,0 +1,14 @@
+{
+  "id": "nodebb-plugin-anbient"
+, "name": "NodeBB Anbient Utilities"
+, "description": "A plugin with a bunch of fixes/utilities for the Anbient community."
+, "url": "https://github.com/fidelix/nodebb-plugin-anbient"
+, "library": "./library.js"
+, "hooks": [
+  {
+    "hook": "filter:plugin.write-api.routes"
+  , "method": "parse"
+  , "callbacked": true
+  }
+]
+}
