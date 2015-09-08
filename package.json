@@ -1,0 +1,19 @@
+{
+  "name": "nodebb-plugin-anbient",
+  "version": "1.0.0",
+  "description": "Anbient Utilities for NodeBB",
+  "main": "library.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fidelix/nodebb-plugin-anbient.git"
+  },
+  "author": "eu@felipefidelix.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fidelix/nodebb-plugin-anbient/issues"
+  },
+  "homepage": "https://github.com/Fidelix/nodebb-plugin-anbient#readme"
+}
