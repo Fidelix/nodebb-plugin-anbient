@@ -1,34 +1,24 @@
 'use strict';
 
-var controllers = require('./controllers'),
-  helpers = require.main.require('./src/routes/helpers'),
+var helpers = require.main.require('./src/routes/helpers'),
   winston = require.main.require('winston'),
-  friends = require('./friends');
+  user = require.main.require('./src/user'),
+  topics = require.main.require('./src/topics'),
+  async = require('async');
 
-var addRoutes = function(data, callback) {
-  data.router.get('/awesome', apiMiddleware.requireUser, function(req, res) {
-    console.log('lorem ipsum!');
-    res.sendStatus(200);
-  });
+(function(library) {
 
-  callback(null, data);
-});
+  library.init = function(params, callback) {
+    require('./websockets');
+    require('./hooks');
 
-
-(function(routes) {
-  function getUserFromEmail(){
-    winston.verbose('ZIBIRATO');
-  };
-
-  routes.init = function(params, callback) {
     var middlewares = [params.middleware.checkGlobalPrivacySettings];
-
-    helpers.setupPageRoute(params.router, '/user/email/:email', params.middleware, middlewares, getUserFromEmail);
+    helpers.setupPageRoute(params.router, '/users/email/:email', params.middleware, middlewares);
 
     callback();
   };
 
-  routes.initWriteRoutes = function(data, callback) {
+  library.initWriteRoutes = function(data, callback) {
     var db = require.main.require('./src/database'),
       middleware = {
         verifyUserExists: function(req, res, next) {
@@ -44,14 +34,29 @@ var addRoutes = function(data, callback) {
         }
       };
 
-    data.router.get('/user/email/:email', data.apiMiddleware.requireUser, data.apiMiddleware.requireAdmin, middleware.verifyUserExists, function(req, res) {
-      console.log('Oh Shit!');
-      friends.getFriendsPageData(req.params.uid, req.user.uid, 0, 49, function(err, friendsData) {
-        return data.errorHandler.handle(err, res, friendsData);
+    data.router.get('/users/email/:email', function(req, res) {
+      var email = req.params.email;
+      async.parallel({
+        username: function (next) {
+          user.getUsernameByEmail(email, next);
+        },
+        uid: function (next) {
+          user.getUidByEmail(email, next);
+        }
+      }, function (err, results) {
+        return data.errorHandler.handle(err, res, results);
       });
     });
 
-    winston.verbose('[plugins/friends] Write API integration enabled, routes added.');
+    data.router.get('/topics/info/:tid', function(req, res) {
+      var tid = req.params.tid;
+      topics.getTopicField(tid, 'postcount', function(err, postCount){
+        postCount = parseInt(postCount, 10) - 1;
+        return data.errorHandler.handle(err, res, {postCount: postCount});
+      });
+    });
+
+    winston.verbose('[plugins/anbient] Write API integration enabled, Anbient routes added.');
     callback(null, data);
   };
 

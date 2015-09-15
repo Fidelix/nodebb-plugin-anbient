@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Fidelix/nodebb-plugin-anbient/issues"
   },
-  "homepage": "https://github.com/Fidelix/nodebb-plugin-anbient#readme"
+  "homepage": "https://github.com/Fidelix/nodebb-plugin-anbient#readme",
+  "nbbpm": {
+    "compatibility": "^0.7.0 || ^0.8.0"
+  }
 }
