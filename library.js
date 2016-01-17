@@ -50,10 +50,24 @@ var helpers = require.main.require('./src/routes/helpers'),
 
     data.router.get('/topics/info/:tid', function(req, res) {
       var tid = req.params.tid;
-      topics.getTopicField(tid, 'postcount', function(err, postCount){
-        postCount = parseInt(postCount, 10) - 1;
-        return data.errorHandler.handle(err, res, {postCount: postCount});
+
+      async.parallel({
+        count: function (next) {
+          topics.getTopicField(tid, 'postcount', next);
+        },
+        slug: function (next) {
+          topics.getTopicField(tid, 'slug', next);
+        }
+      }, function (err, results) {
+        return data.errorHandler.handle(err, res, results);
       });
+
+
+
+
+
+
+
     });
 
     winston.verbose('[plugins/anbient] Write API integration enabled, Anbient routes added.');
